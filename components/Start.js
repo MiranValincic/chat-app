@@ -9,10 +9,13 @@ import {
   Pressable,
   TouchableOpacity,
   ImageBackground,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import BackgroundImage from "../img/Background_Image.png";
 
 export default class Start extends React.Component {
+  //setting state for name and backgroundcolor
   constructor(props) {
     super(props);
 
@@ -21,13 +24,14 @@ export default class Start extends React.Component {
       bgColor: this.backgroundColors,
     };
   }
+  // background colors the user can select
   backgroundColors = {
     black: "#090C08",
     lightGray: "#474056",
     lightBlue: "#8A95A5",
     lightGreen: "#B9C6AE",
   };
-
+  // function to setState to change the backgroundcolor on user select of background
   changeColor = (selectedColor) => {
     this.setState({ bgColor: selectedColor });
   };
@@ -49,7 +53,9 @@ export default class Start extends React.Component {
               style={styles.input}
               placeholder="Your name..."
             />
-
+            {Platform.OS === "android" ? (
+              <KeyboardAvoidingView behavior="height" />
+            ) : null}
             {/* Allow user to choose a background color for the chat screen */}
             <View style={styles.colorSelection}>
               <Text style={styles.text}>Choose a Background Color</Text>
