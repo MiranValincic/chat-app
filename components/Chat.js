@@ -1,21 +1,28 @@
 /** @format */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function Chat(props) {
-  let { name, color } = props.route.params;
+export default class Chat extends React.Component {
+  constructor(props) {
+    super(props);
 
-  // Set the screen title to the user name entered in the start screen
-  useEffect(() => {
-    props.navigation.setOptions({ title: name });
-  }, []);
-
-  return (
-    <View style={[{ backgroundColor: color }, styles.container]}>
-      <Text style={styles.text}>Hello Chat!</Text>
-    </View>
-  );
+    this.state = {
+      name: "",
+      bgColor: this.backgroundColors,
+    };
+  }
+  render() {
+    // Set the screen title to the user name entered in the start screen
+    let name = this.props.route.params.name;
+    this.props.navigation.setOptions({ title: name });
+    let bgColor = this.props.route.params.bgColor;
+    return (
+      <View style={[{ backgroundColor: bgColor }, styles.container]}>
+        <Text style={styles.text}>Hello Chat!</Text>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

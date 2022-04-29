@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -12,83 +12,92 @@ import {
 } from "react-native";
 import BackgroundImage from "../img/Background_Image.png";
 
-// Create constant that holds background colors for Chat Screen
-const colors = {
-  black: "#090C08",
-  purple: "#474056",
-  grey: "#8A95A5",
-  green: "#B9C6AE",
-};
+export default class Start extends React.Component {
+  constructor(props) {
+    super(props);
 
-export default function Start(props) {
-  let [name, setName] = useState();
-  let [color, setColor] = useState();
+    this.state = {
+      name: "",
+      bgColor: this.backgroundColors,
+    };
+  }
+  backgroundColors = {
+    black: "#090C08",
+    lightGray: "#474056",
+    lightBlue: "#8A95A5",
+    lightGreen: "#B9C6AE",
+  };
 
-  // Setting default name and background color
-  // useEffect(() => {
-  //   setName('Your name...');
-  //   setColor(colors.black);
-  // }, [])
+  changeColor = (selectedColor) => {
+    this.setState({ bgColor: selectedColor });
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <ImageBackground
+          source={BackgroundImage}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.title}>Chat app</Text>
 
-  return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={BackgroundImage}
-        resizeMode="cover"
-        style={styles.image}
-      >
-        <Text style={styles.title}>App title</Text>
-
-        <View style={styles.box}>
-          {/* Input box to set user name passed to chat screen */}
-          <TextInput
-            onChangeText={(name) => setName(name)}
-            value={name}
-            style={styles.input}
-            placeholder="Your name..."
-          />
-
-          {/* Allow user to choose a background color for the chat screen */}
-          <Text style={styles.text}>Choose Background Color:</Text>
-          <View style={styles.colorContainer}>
-            <TouchableOpacity
-              style={[{ backgroundColor: colors.black }, styles.colorbutton]}
-              onPress={() => setColor(colors.black)}
+          <View style={styles.box}>
+            {/* Input box to set user name passed to chat screen */}
+            <TextInput
+              onChangeText={(text) => this.setState({ name: text })}
+              value={this.state.name}
+              style={styles.input}
+              placeholder="Your name..."
             />
+
+            {/* Allow user to choose a background color for the chat screen */}
+            <View style={styles.colorSelection}>
+              <Text style={styles.text}>Choose a Background Color</Text>
+
+              <View style={styles.colorAvatars}>
+                <TouchableOpacity
+                  style={styles.black}
+                  onPress={() => this.changeColor(this.backgroundColors.black)}
+                ></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.lightGray}
+                  onPress={() =>
+                    this.changeColor(this.backgroundColors.lightGray)
+                  }
+                ></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.lightBlue}
+                  onPress={() =>
+                    this.changeColor(this.backgroundColors.lightBlue)
+                  }
+                ></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.lightGreen}
+                  onPress={() =>
+                    this.changeColor(this.backgroundColors.lightGreen)
+                  }
+                ></TouchableOpacity>
+              </View>
+            </View>
+
             <TouchableOpacity
-              style={[{ backgroundColor: colors.purple }, styles.colorbutton]}
-              onPress={() => setColor(colors.purple)}
-            />
-            <TouchableOpacity
-              style={[{ backgroundColor: colors.grey }, styles.colorbutton]}
-              onPress={() => setColor(colors.grey)}
-            />
-            <TouchableOpacity
-              style={[{ backgroundColor: colors.green }, styles.colorbutton]}
-              onPress={() => setColor(colors.green)}
-            />
+              style={styles.button}
+              title="Go to Chat"
+              onPress={() =>
+                this.props.navigation.navigate("Chat", {
+                  name: this.state.name,
+                  bgColor: this.state.bgColor,
+                })
+              }
+            >
+              <Text style={styles.buttonText}>Start chatting</Text>
+            </TouchableOpacity>
           </View>
-
-          {/* Open chatroom, passing user name and background color as props */}
-          <Pressable
-            onPress={() =>
-              props.navigation.navigate("Chat", { name: name, color: color })
-            }
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "#585563" : "#757083",
-              },
-              styles.button,
-            ]}
-          >
-            <Text style={styles.buttontext}>Start Chatting</Text>
-          </Pressable>
-        </View>
-      </ImageBackground>
-    </View>
-  );
+        </ImageBackground>
+      </View>
+    );
+  }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -111,7 +120,7 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: "white",
     alignItems: "center",
-    height: "44%",
+    height: "60%",
     justifyContent: "space-evenly",
   },
 
@@ -132,16 +141,10 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
 
-  colorContainer: {
+  colorAvatars: {
     width: "88%",
     flexDirection: "row",
     justifyContent: "space-evenly",
-  },
-
-  colorbutton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
   },
 
   button: {
@@ -155,5 +158,34 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  // Colors
+
+  black: {
+    backgroundColor: "#090C08",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+
+  lightGray: {
+    backgroundColor: "#474056",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+
+  lightBlue: {
+    backgroundColor: "#8A95A5",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+
+  lightGreen: {
+    backgroundColor: "#B9C6AE",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
 });
