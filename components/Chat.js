@@ -1,12 +1,14 @@
 /** @format */
 
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
-import { Platform, KeyboardAvoidingView } from "react-native";
+import { View } from "react-native";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+import { Platform, KeyboardAvoidingView, LogBox } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 export default class Chat extends React.Component {
   constructor() {
@@ -27,7 +29,6 @@ export default class Chat extends React.Component {
       projectId: "chat-app-8ad7c",
       storageBucket: "chat-app-8ad7c.appspot.com",
       messagingSenderId: "639960482069",
-      appId: "1:639960482069:web:2cea5680b98972d40e291c",
     };
 
     if (!firebase.apps.length) {
@@ -36,30 +37,94 @@ export default class Chat extends React.Component {
 
     //refernces the database
     this.referenceChatMessages = firebase.firestore().collection("messages");
+
+    // To remove warning message in the console
+    LogBox.ignoreLogs([
+      "Setting a timer",
+      "Warning: ...",
+      "undefined",
+      "Animated.event now requires a second argument for options",
+      "Console Warning",
+    ]);
+  }
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   componentDidMount() {
-    //  takes the entered username from start.js assigned to a variable "name"
+    // get username prop from Start.js
     let name = this.props.route.params.name;
+    // adds the name written in the start screen to the top of the screen
     this.props.navigation.setOptions({ title: name });
-    // user authentication
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        firebase.auth().signInAnonymously();
+
+    // Check if the user is online
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        this.setState({ isConnected: true });
+        console.log("online");
+
+        // Firebase user authentication
+        this.authUnsubscribe = firebase
+          .auth()
+          .onAuthStateChanged(async (user) => {
+            if (!user) {
+              await firebase.auth().signInAnonymously();
+            }
+
+            this.setState({
+              uid: user.uid,
+              messages: [],
+              user: {
+                _id: user.uid,
+                name: name,
+                avatar: "https://placeimg.com/140/140/any",
+              },
+            });
+
+            this.referenceMessagesUser = firebase
+              .firestore()
+              .collection("messages")
+              .where("uid", "==", this.state.uid);
+
+            this.unsubscribe = this.referenceChatMessages
+              .orderBy("createdAt", "desc")
+              .onSnapshot(this.onCollectionUpdate);
+          });
+      } else {
+        this.setState({ isConnected: false });
+        console.log("offline");
+        this.getMessages();
       }
-      //update user state with currently active user data
-      this.setState({
-        uid: user.uid,
-        messages: [],
-        user: {
-          _id: user.uid,
-          name: name,
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      });
-      this.unsubscribe = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshot(this.onCollectionUpdate);
     });
   }
 
@@ -101,6 +166,7 @@ export default class Chat extends React.Component {
       }),
       () => {
         this.addMessages();
+        this.saveMessages();
       }
     );
   }
@@ -123,6 +189,12 @@ export default class Chat extends React.Component {
       />
     );
   }
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
+  }
   render() {
     // Set the screen title to the user name entered in the start screen
     let name = this.props.route.params.name;
@@ -137,6 +209,7 @@ export default class Chat extends React.Component {
       >
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{

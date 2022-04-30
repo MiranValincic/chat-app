@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: "white",
     alignItems: "center",
-    height: "60%",
+    height: "70%",
     justifyContent: "space-evenly",
   },
 
@@ -138,7 +138,8 @@ const styles = StyleSheet.create({
     color: "#757083",
     borderColor: "gray",
     borderWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    marginTop: 40,
   },
 
   text: {
@@ -151,6 +152,8 @@ const styles = StyleSheet.create({
     width: "88%",
     flexDirection: "row",
     justifyContent: "space-evenly",
+    marginTop: 0,
+    marginBottom: 20,
   },
 
   button: {
@@ -158,6 +161,7 @@ const styles = StyleSheet.create({
     width: "88%",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#B9C6AE",
   },
 
   buttontext: {
