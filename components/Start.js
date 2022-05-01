@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: "white",
     alignItems: "center",
-    height: "70%",
-    justifyContent: "space-evenly",
+    height: "60%",
+    justifyContent: "center",
   },
 
   input: {
@@ -139,20 +139,21 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginBottom: 10,
+    marginTop: 10,
   },
 
   text: {
     color: "#757083",
     fontSize: 16,
     fontWeight: "300",
+    marginBottom: 5,
   },
 
   colorAvatars: {
     width: "88%",
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginTop: 0,
     marginBottom: 20,
   },
 
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#B9C6AE",
+    marginBottom: 10,
   },
 
   buttontext: {
