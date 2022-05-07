@@ -6,6 +6,8 @@ This project it's all about mobile and navigation between screens!
 
 I will create a chat app, where you can:
 
+![alt text](chat-app.png)
+
 Change the chat's background color; User can insert the name on the initial page; Name will be displayed on top of the chat page; Users will be able to share their location; Users will be able to share images.
 
 Built with:
